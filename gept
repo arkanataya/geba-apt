@@ -1,1 +1,15 @@
 # RtF No Off
+if [ "$1" == "install" ];
+ then
+if [ "curl -LI https:// -o /dev/null -w '%{http_code}\n' -s" == "200"];
+ then
+curl https://
+else
+echo "E: Not Found, Maintenance or Forbidden";
+exit 1
+fi
+
+else
+echo "Not Found gebt $1 $2";
+exit 1
+fi
