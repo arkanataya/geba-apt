@@ -8,7 +8,7 @@ exit 1
 fi
 if [ "$1" == "install" ];
  then
-STX=curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s
+STX="curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s"
 if [ "$($stx)" == "200"];
  then
 curl https://package-pln.neoncorp.eu.org/Linux/$2 > /bin/$2
