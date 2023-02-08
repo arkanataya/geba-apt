@@ -1,9 +1,10 @@
 # RtF No Off
 if [ "$UID" == "0" ];
 then
-
+echo "OK"
 else
-echo "your Need Sudo";
+echo "your Need Sudo"
+exit 1
 fi
 if [ "$1" == "install" ];
  then
@@ -14,6 +15,7 @@ chmod +x /bin/$2
 echo Applying...
 delay 5
 echo Processing 
+
 else
 echo "E: Not Found, Maintenance or Forbidden";
 exit 1
