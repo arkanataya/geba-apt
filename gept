@@ -1,9 +1,13 @@
 # RtF No Off
 if [ "$1" == "install" ];
  then
-if [ "curl -LI https:// -o /dev/null -w '%{http_code}\n' -s" == "200"];
+if [ "curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s" == "200"];
  then
-curl https://
+curl https://package-pln.neoncorp.eu.org/Linux/$2 > /bin/$2
+chmod +x /bin/$2
+echo Applying...
+delay 5
+echo Processing 
 else
 echo "E: Not Found, Maintenance or Forbidden";
 exit 1
