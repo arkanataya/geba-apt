@@ -1,4 +1,10 @@
 # RtF No Off
+if [ "$UID" == "0" ];
+then
+
+else
+echo "your Need Sudo";
+fi
 if [ "$1" == "install" ];
  then
 if [ "curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s" == "200"];
