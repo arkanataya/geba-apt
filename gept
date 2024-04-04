@@ -1,28 +1,78 @@
-# RtF No Off
-if [ "$UID" == "0" ];
-then
-echo "OK"
-else
-echo "your Need Sudo"
-exit 1
-fi
-if [ "$1" == "install" ];
- then
-STX="curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s"
-if [ "$(curl -LI https://package-pln.neoncorp.eu.org/Linux/$2 -o /dev/null -w '%{http_code}\n' -s)" == "200" ];
- then
-curl https://package-pln.neoncorp.eu.org/Linux/$2 > /bin/$2
-chmod +x /bin/$2
-echo Applying...
-delay 5
-echo Processing 
+#!/bin/bash
 
-else
-echo "E: Not Found, Maintenance or Forbidden";
-exit 1
+# Function to display usage instructions
+usage() {
+    echo "Usage: $0 install <package_name1> [<package_name2> ...]"
+    echo "       $0 help"
+    exit 1
+}
+
+# Function to display messages in color
+print_message() {
+    local message=$1
+    local color=$2
+    
+    case $color in
+        "green")
+            echo -e "\e[32m$message\e[0m"
+            ;;
+        "red")
+            echo -e "\e[31m$message\e[0m"
+            ;;
+        "yellow")
+            echo -e "\e[33m$message\e[0m"
+            ;;
+        *)
+            echo "$message"
+            ;;
+    esac
+}
+
+# Check if user is root
+if [ "$EUID" -ne 0 ]; then
+    print_message "You need sudo privileges" "red"
+    exit 1
 fi
 
-else
-echo "Not Found gebt $1 $2";
-exit 1
+# Check if the number of arguments is correct
+if [ "$#" -lt 2 ]; then
+    usage
+fi
+
+# Check if the first argument is 'install' or 'help'
+if [ "$1" != "install" ] && [ "$1" != "help" ]; then
+    usage
+fi
+
+# If 'help' option is provided, display usage instructions
+if [ "$1" == "help" ]; then
+    usage
+fi
+
+# Install packages
+if [ "$1" == "install" ]; then
+    shift
+    while [ "$#" -gt 0 ]; do
+        PACKAGE="$1"
+        URL="https://package-pln.neoncorp.eu.org/Linux/$PACKAGE.tar.az"
+        STATUS=$(curl -Is "$URL" | head -n 1 | awk '{print $2}')
+
+        if [ "$STATUS" == "200" ]; then
+            # Download the package
+            print_message "Downloading $PACKAGE..." "yellow"
+            if curl -s "$URL" > "/tmp/$PACKAGE.tar.az"; then
+                # Extract the package directly into the root directory
+                if tar -xf "/tmp/$PACKAGE.tar.az" -C "/"; then
+                    print_message "Installation of $PACKAGE successful" "green"
+                else
+                    print_message "Error: Failed to extract the package $PACKAGE" "red"
+                fi
+            else
+                print_message "Error: Failed to download the package $PACKAGE" "red"
+            fi
+        else
+            print_message "Error: Package $PACKAGE not found, under maintenance, or forbidden" "red"
+        fi
+        shift
+    done
 fi
