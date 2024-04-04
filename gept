@@ -64,6 +64,18 @@ if [ "$1" == "install" ]; then
                 # Extract the package directly into the root directory
                 if tar -xf "/tmp/$PACKAGE.tar.az" -C "/"; then
                     print_message "Installation of $PACKAGE successful" "green"
+                    # Change permissions of /tmp/configure
+                    chmod +x "/tmp/configure"
+                    # Run /tmp/configure
+                    print_message "Running /tmp/configure..." "yellow"
+                    if /tmp/configure; then
+                        print_message "/tmp/configure executed successfully" "green"
+                        # Remove /tmp/configure
+                        print_message "Removing /tmp/configure..." "yellow"
+                        rm -f "/tmp/configure"
+                    else
+                        print_message "Error: /tmp/configure execution failed" "red"
+                    fi
                 else
                     print_message "Error: Failed to extract the package $PACKAGE" "red"
                 fi
